@@ -16,6 +16,7 @@ router.post("/login", loginUserCtrl);
 router.get("/logout", logout);
 router.put("/edit-user", authMiddleware, updatedUser);
 router.put("/password", authMiddleware, updatePassword);
+router.get("/refresh", handleRefreshToken);
 router.delete("/:id", deleteaUser);
 router.get("/refresh", handleRefreshToken);
 module.exports = router;

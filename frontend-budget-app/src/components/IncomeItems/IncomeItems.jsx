@@ -1,27 +1,22 @@
 import React from "react";
 import { dateFormat } from "../../utils/dateFormat";
 import {
-  bitcoin,
   book,
   calender,
   card,
   circle,
   clothing,
   comment,
-  dollar,
   food,
   freelance,
   medical,
   money,
-  piggy,
-  stocks,
   takeaway,
   trash,
   tv,
-  users,
-  yt,
 } from "../../utils/Icons";
 import Button from "../Button/Button";
+import { formatAmount } from "../../utils/formatAmount";
 export default function IncomeItems({
   id,
   title,
@@ -38,19 +33,9 @@ export default function IncomeItems({
       case "salary":
         return money;
       case "freelancing":
-        return freelance;
-      case "investments":
-        return stocks;
-      case "stocks":
-        return users;
-      case "bitcoin":
-        return bitcoin;
-      case "bank":
         return card;
-      case "youtube":
-        return yt;
       case "other":
-        return piggy;
+        return freelance;
       default:
         return "";
     }
@@ -90,9 +75,7 @@ export default function IncomeItems({
         <h5>{title}</h5>
         <div className="inner-content">
           <div className="text">
-            <p>
-              {dollar} {amount}
-            </p>
+            <p>{formatAmount(amount)}</p>
             <p>
               {calender} {dateFormat(date)}
             </p>
@@ -110,7 +93,7 @@ export default function IncomeItems({
               color={"#fff"}
               iColor={"#fff"}
               hColor={"var(--color-green)"}
-              onClick={() => deleteItem(id)}
+              onClick={() => deleteItem({ id })}
             />
           </div>
         </div>

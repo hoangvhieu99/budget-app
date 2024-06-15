@@ -1,42 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Form from "../Form/Form";
 import IncomeItem from "../IncomeItems/IncomeItems";
+import {
+  addIncome,
+  deleteIncome,
+  getIncomes,
+} from "../../redux/slides/incomeSlice";
 import { toast } from "react-toastify";
-import axios from "axios";
-import { getIncomes } from "../../redux/slides/incomeSlice";
+import { formatAmount } from "./../../utils/formatAmount";
+
 export default function Incomes() {
   const { currentUser } = useSelector((state) => state.user);
-  const { incomes } = useSelector((state) => state.income);
-  console.log(incomes);
+  const { incomes, loading, getTotalIncome } = useSelector(
+    (state) => state.income
+  );
   const dispatch = useDispatch();
-  // const url = "/api/income/get-incomes";
-  // const [incomes, setIncomes] = useState([]);
   const AuthStr = "Bearer ".concat(currentUser.token);
+
   useEffect(() => {
     dispatch(getIncomes(AuthStr));
   }, []);
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await axios.get(url, {
-  //       headers: { Authorization: AuthStr },
-  //     });
 
-  //     // if (!response.ok) {
-  //     //   throw new Error("Network response was not ok");
-  //     // }
-  //     console.log(response.data);
-  //     return response.data;
-  //     // const data = await response.json();
-  //   } catch (error) {
-  //     toast.error("error");
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
-
+  const handleAddIncome = async (incomeData) => {
+    try {
+      await dispatch(addIncome({ ...incomeData, token: AuthStr }));
+      dispatch(getIncomes(AuthStr));
+      toast.success("Thêm thành công");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  const handleDeleteIncome = async (id) => {
+    try {
+      await dispatch(deleteIncome({ ...id, token: AuthStr }));
+      dispatch(getIncomes(AuthStr));
+      toast.success("Đã xoá item");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   // const totalIncome = incomes.reduce(
   //   (sum, transaction) => sum + transaction.amount,
   //   0
@@ -44,34 +48,45 @@ export default function Incomes() {
   return (
     <div className="income-style">
       <div className="inner-layout">
-        <h1>Incomes</h1>
-        {/* <h2 className="total-income">
-          Total Income: <span>${selectTotalIncome}</span>
-        </h2> */}
+        <h1>Thu nhập</h1>
+        <h2 className="total-income">
+          Tổng thu nhập: <span> {formatAmount(getTotalIncome)}</span>
+        </h2>
         <div className="income-content">
-          {/* <div className="form-container">
-            <Form />
-          </div> */}
-          <div className="incomes">
-            {incomes.map((income) => {
-              const { _id, title, amount, date, category, description, type } =
-                income;
-              return (
-                <IncomeItem
-                  key={_id}
-                  id={_id}
-                  title={title}
-                  description={description}
-                  amount={amount}
-                  date={date}
-                  type={type}
-                  category={category}
-                  indicatorColor="var(--color-green)"
-                  deleteItem={deleteIncome}
-                />
-              );
-            })}
+          <div className="form-container">
+            <Form onAddIncome={handleAddIncome} />
           </div>
+          {loading ? (
+            "Loading..."
+          ) : (
+            <div className="incomes">
+              {incomes.map((income) => {
+                const {
+                  _id,
+                  title,
+                  amount,
+                  date,
+                  category,
+                  description,
+                  type,
+                } = income;
+                return (
+                  <IncomeItem
+                    key={_id}
+                    id={_id}
+                    title={title}
+                    description={description}
+                    amount={amount}
+                    date={date}
+                    type={type}
+                    category={category}
+                    indicatorColor="var(--color-green)"
+                    deleteItem={handleDeleteIncome}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

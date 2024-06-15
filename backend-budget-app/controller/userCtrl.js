@@ -23,7 +23,7 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
   const findUser = await User.findOne({ email });
   if (findUser && (await findUser.isPasswordMatched(password))) {
     const refreshToken = await generateRefreshToken(findUser?._id);
-    const updateuser = await User.findByIdAndUpdate(
+    const updateUser = await User.findByIdAndUpdate(
       findUser.id,
       {
         refreshToken: refreshToken,

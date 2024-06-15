@@ -8,12 +8,14 @@ const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/authRoute");
 const incomeRouter = require("./routes/incomeRoute");
 const expenseRouter = require("./routes/expenseRoute");
-
+const cors = require("cors");
 const morgan = require("morgan");
+
 dbConnect();
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
